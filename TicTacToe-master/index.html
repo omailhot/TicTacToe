@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr-ca" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <title>Tic Tac Toe</title>
+        <style>
+        	html, body {
+        		width: 100%;
+        		height: 100%;
+                font-family: 'Open Sans', 'Helvetica', 'Arial', sans-serif;
+        	}
+            table {
+                margin: 60px auto 0 auto;
+            }
+            td {
+                width: 200px;
+                height: 200px;
+                font-size: 125px;
+                color: #eee;
+                padding-left: 50px;
+                cursor: pointer;
+            }
+            #cell2-2 {
+                border: 5px solid #eee;
+            }
+            #cell2-1, #cell2-3 {
+                border-top: 5px solid #eee;
+                border-bottom: 5px solid #eee;
+            }
+            #cell1-2, #cell3-2 {
+                border-left: 5px solid #eee;
+                border-right: 5px solid #eee;
+            }
+            body {
+                background-color: #111;
+            }
+            #indication{
+                font-size: 60px;
+                color: #eee;
+                margin: auto;
+                width: 50%;
+                text-align: center;
+            }
+            .score {
+            	color: #eee;
+                font-size: 30px;
+                text-align: center;
+                display: inline-block;
+                margin-top: 50px;
+                margin-left: 50px;
+                margin-right: 50px;
+            }
+            #scores {
+                margin: auto;
+                width: 50%;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h2 id="indication"></h2>
+        
+        <table>
+            <tr>
+                <td id="cell1-1" onclick="cellClicked(1, 1)">
+                </td>
+                <td id="cell1-2" onclick="cellClicked(1, 2)"> 
+                </td>
+                <td id="cell1-3" onclick="cellClicked(1, 3)"> 
+                </td>
+            </tr>
+            <tr>
+                <td id="cell2-1" onclick="cellClicked(2, 1)"> 
+                </td>
+                <td id="cell2-2" onclick="cellClicked(2, 2)"> 
+                </td>
+                <td id="cell2-3" onclick="cellClicked(2, 3)"> 
+                </td>
+            </tr>
+            <tr>
+                <td id="cell3-1" onclick="cellClicked(3, 1)"> 
+                </td>
+                <td id="cell3-2" onclick="cellClicked(3, 2)"> 
+                </td>
+                <td id="cell3-3" onclick="cellClicked(3, 3)"> 
+                </td>
+            </tr>
+        </table>
+        <div id="scores">
+            <h3 id="scoreX" class="score"></h3>
+            <h3 id="scoreO" class="score"></h3>
+            <h3 id="scoreNulle" class="score"></h3>
+        </div>
+    </body>
+</html>
+<script>
+    var pointsX = 0;
+    var pointsO = 0;
+    var pointsNulle = 0;
+    var joueurX = "X";
+    var joueurO = "O";
+    joueurCourant = joueurX;
+    function cellClicked(row, col) {
+        var cell = "#cell" + row + "-" + col;
+        if ($(cell).html().trim() == "")
+        {
+            if (joueurCourant == joueurX)
+            {
+                $(cell).html("X");
+                joueurCourant = joueurO;
+            }
+            else if (joueurCourant == joueurO)
+            {
+                $(cell).html("O");
+                joueurCourant = joueurX;
+            }
+            indication();
+            
+        }
+        
+        for (rangée = 1; rangée <= 3; rangée++)
+        {
+            for (colonne = 1; colonne <= 3; colonne++)
+            {
+                //Victoire X
+                if (getCell(rangée, 1) == "X" && getCell(rangée, 2) == "X" && getCell(rangée, 3) == "X" ||
+                getCell(1, colonne) == "X" && getCell(2, colonne) == "X" && getCell(3, colonne) == "X" ||
+                getCell(1, 1) == "X" && getCell(2, 2) == "X" && getCell(3, 3) == "X" ||
+                getCell(1, 3) == "X" && getCell(2, 2) == "X" && getCell(3, 1) == "X" )
+                {
+                    pointsX++;
+                    victoire("X");
+                    scoreX();
+                    joueurCourant = joueurO;
+                }
+
+                //Victoire O
+                if (getCell(rangée, 1) == "O" && getCell(rangée, 2) == "O" && getCell(rangée, 3) == "O" ||
+                getCell(1, colonne) == "O" && getCell(2, colonne) == "O" && getCell(3, colonne) == "O" ||
+                getCell(1, 1) == "O" && getCell(2, 2) == "O" && getCell(3, 3) == "O" ||
+                getCell(1, 3) == "O" && getCell(2, 2) == "O" && getCell(3, 1) == "O" )
+                {
+                    pointsO++;
+                    victoire("O");
+                    scoreO();
+                    joueurCourant = joueurX;
+                }
+
+                //Partie Nulle
+                var notFull = false;
+                $("td").each(function() {
+                    if ($(this).html().trim() == "") {
+                        notFull = true;
+                    }
+                });
+                if (!notFull) {
+                    alert("Partie Nulle")
+                    $("td").empty();
+                    pointsNulle++;
+                    scoreNulle();
+                }              
+            }
+        }
+    }
+    function victoire(gagnant)
+    {
+        alert("Victoire de " + gagnant);
+        $("td").empty();
+    }
+
+    function getCell(x,y) {
+        return $("#cell" + (x) + "-" + (y)).html().trim();
+    }
+    
+    function indication() {
+        $("#indication").html("Au tour de : " + joueurCourant);
+    }
+
+    function scoreX() {
+        $("#scoreX").html("Score de X : " + pointsX);
+    }
+
+    function scoreO() {
+        $("#scoreO").html("Score de O : " + pointsO);
+    }
+
+    function scoreNulle() {
+        $("#scoreNulle").html("Parties nulles : " + pointsNulle);
+    }
+    indication();
+    scoreX();
+    scoreO();
+    scoreNulle();
+</script>
